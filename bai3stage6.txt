@@ -1,0 +1,64 @@
+1. mục tiêu
+
+sử dụng powershell để tạo cấu trúc thư mục, tạo nhiều file cùng lúc và sao chép thư mục có chứa dữ liệu bên trong.
+
+2. sơ đồ luồng ipo
+
+input (đầu vào):
+
+- tên thư mục gốc: smart-farm
+- các thư mục: data\logs, code, backup
+- các file: config.json, sensors.py, .env
+
+process (xử lý):
+
+1. tạo các thư mục bằng lệnh new-item -itemtype directory.
+2. tạo 3 file cùng lúc bằng một dòng lệnh powershell.
+3. sao chép toàn bộ thư mục code sang backup\code_v1 bằng lệnh copy-item -recurse.
+
+output (đầu ra):
+
+- cây thư mục smart-farm được tạo đầy đủ.
+- có 3 file cấu hình trong thư mục code.
+- thư mục backup\code_v1 chứa bản sao của thư mục code.
+
+3. các lệnh powershell đã sử dụng
+
+bước 1: tạo cây thư mục bằng một dòng lệnh
+New-Item -ItemType Directory -Force -Path "smart-farm\data\logs","smart-farm\code","smart-farm\backup"
+
+lệnh này tạo các thư mục lồng nhau cần thiết. tham số -force giúp tạo các thư mục cha còn thiếu và tránh báo lỗi khi thư mục đã tồn tại.
+
+bước 2: tạo 3 file bằng một dòng lệnh
+New-Item -ItemType File -Force -Path "smart-farm\code\config.json","smart-farm\code\sensors.py","smart-farm\code\.env"
+
+lệnh này tạo đồng thời 3 file trong thư mục code, trong đó .env thường được dùng để lưu các biến môi trường.
+
+bước 3: sao chép toàn bộ thư mục code
+
+Copy-Item -Path "smart-farm\code" -Destination "smart-farm\backup\code_v1" -Recurse
+
+tham số -recurse cho phép sao chép toàn bộ nội dung bên trong thư mục code.
+
+bước 4: kiểm tra kết quả
+Get-ChildItem -Path "smart-farm" -Recurse -Force
+
+lệnh này hiển thị các thư mục và file bên trong smart-farm, bao gồm cả file ẩn như .env.
+
+4. kết quả mong đợi
+smart-farm
+├── data
+│   └── logs
+├── code
+│   ├── config.json
+│   ├── sensors.py
+│   └── .env
+└── backup
+    └── code_v1
+        ├── config.json
+        ├── sensors.py
+        └── .env
+
+5. kết luận
+
+qua bài tập này, em đã biết cách tạo cây thư mục lồng nhau, tạo nhiều file bằng một dòng lệnh và sao chép thư mục đệ quy trong powershell. các thao tác này giúp quản lý cấu trúc dự án nhanh chóng trên máy chủ windows không có giao diện đồ họa.
